@@ -1,0 +1,16 @@
+name: PHPStan
+
+on: [push]
+
+jobs:
+  phpstan:
+    name: "🧹 PHPSTAN"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
+
+      - name: "🧹 Run PHPStan Static Analysis"
+        uses: actions-x/phpstan@v1
+        with:
+          installComposer: 1
