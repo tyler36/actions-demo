@@ -2,7 +2,8 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
+use Illuminate\Support\Facades\Config;
 
 class ExampleTest extends TestCase
 {
@@ -14,5 +15,12 @@ class ExampleTest extends TestCase
     public function test_that_true_is_true()
     {
         $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function dump_database_connection()
+    {
+        dump(Config::get('database.default'));
+        dump(Config::get('database.connections.mysql'));
     }
 }

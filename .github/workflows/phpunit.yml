@@ -1,36 +1,38 @@
-name: CI
+name: phpunit
 
 on: push
 
 jobs:
   phpunit:
     runs-on: ubuntu-latest
-    container:
-      image: kirschbaumdevelopment/laravel-test-runner:8.0
-
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: test
-        ports:
-          - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
 
-    - name: Install composer dependencies
-      run: |
-        composer install --no-scripts
+      - name: "⚙️ DDEV"
+        uses: jonaseberle/github-action-setup-ddev@v1
 
-    - name: Prepare Laravel Application
-      run: |
-        cp .env.ci .env
-        php artisan key:generate
+      - name: "📦 Cache Composer dependencies"
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
-    - name: Run Testsuite
-      run: vendor/bin/phpunit tests/
+      - name: "📦 Install Dependencies"
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: "⚙️ Config Laravel"
+        run: |
+          cp .env.ci .env
+          php artisan key:generate
+
+      - name: ✅ Execute tests via PHPUnit"
+        run: ddev exec ./vendor/bin/phpunit
+
+      - name: "☁️ Upload artefacts"
+        uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: Logs
+          path: ./storage/logs
