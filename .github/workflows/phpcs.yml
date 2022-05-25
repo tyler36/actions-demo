@@ -15,3 +15,7 @@ jobs:
           uses: chekalsky/phpcs-action@v1
           with:
             enable_warnings: true
+
+        - uses: stefanzweifel/git-auto-commit-action@v4
+          with:
+              commit_message: Apply php-cs-fixer changes
