@@ -1,3 +1,3 @@
 require('./bootstrap');
 
-console.log('hello');
+console.log('goobar');
