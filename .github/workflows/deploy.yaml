@@ -31,4 +31,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Re-building assets for production
-          file_pattern: public/**/*.css
+          file_pattern: public/**/*.css public/**/*.js
