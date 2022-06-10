@@ -1,0 +1,44 @@
+name: Build application assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+          check-latest: true
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Compile assets for production
+        run: npm run production
+
+  # phpcs:
+  #     name: "🧹 PHPCS"
+  #     runs-on: ubuntu-latest
+
+  #     steps:
+  #       - name: "☁️ checkout repository"
+  #         uses: actions/checkout@v2
+
+  #       - name: "🧹 Run PHPCS check"
+  #         uses: chekalsky/phpcs-action@v1
+  #         with:
+  #           enable_warnings: true
+
+  #       - uses: stefanzweifel/git-auto-commit-action@v4
+  #         with:
+  #             commit_message: Apply php-cs-fixer changes
