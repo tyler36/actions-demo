@@ -1,0 +1,45 @@
+name: Laravel
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  run-phpunit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
+
+      - name:  "🔧 Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+
+      - name: "📦 Cache Composer dependencies"
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: "📦 Install Dependencies"
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: "⚙️ Config Laravel"
+        run:
+          cp .env.ci .env
+          php artisan key:generate
+
+      - name: "✅ Execute tests (Unit and Feature tests) via PHPUnit"
+        run: vendor/bin/phpunit
+
+      - name: "☁️ Upload artefacts"
+        uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: Logs
+          path: ./storage/logs
